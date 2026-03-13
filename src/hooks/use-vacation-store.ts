@@ -44,6 +44,13 @@ export function useVacationStore() {
     });
   }, [setState]);
 
+  const removeRecommendation = useCallback((dates: string[]) => {
+    setState((prev) => {
+      const removeSet = new Set(dates);
+      return { ...prev, selectedDates: prev.selectedDates.filter((d) => !removeSet.has(d)) };
+    });
+  }, [setState]);
+
   return {
     state,
     setRemainingDays,
@@ -51,5 +58,6 @@ export function useVacationStore() {
     toggleVacationDate,
     clearSelectedDates,
     applyRecommendation,
+    removeRecommendation,
   };
 }

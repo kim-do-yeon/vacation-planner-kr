@@ -1,18 +1,14 @@
 "use client";
 
-import { useMemo } from "react";
 import { Header } from "@/components/layout/header";
 import { SectionWrapper } from "@/components/layout/section-wrapper";
 import { VacationInputForm } from "@/components/vacation-input/vacation-input-form";
 import { DdayCountdown } from "@/components/countdown/dday-countdown";
 import { RecommendationEngine } from "@/components/recommendation/recommendation-engine";
 import { HolidayCalendar } from "@/components/calendar/holiday-calendar";
-import { GoldenHolidayCard } from "@/components/golden-holidays/golden-holiday-card";
 import { FlightCostTable } from "@/components/flight-costs/flight-cost-table";
 import { VacationPlanner } from "@/components/planner/vacation-planner";
 import { useVacationStore } from "@/hooks/use-vacation-store";
-import { getHolidaysForYear } from "@/lib/data/holidays";
-import { detectGoldenHolidays } from "@/lib/algorithms/golden-holiday-detector";
 
 export default function Home() {
   const {
@@ -22,12 +18,8 @@ export default function Home() {
     toggleVacationDate,
     clearSelectedDates,
     applyRecommendation,
+    removeRecommendation,
   } = useVacationStore();
-
-  const goldenPeriods = useMemo(() => {
-    const holidays = getHolidaysForYear(state.selectedYear);
-    return detectGoldenHolidays(state.selectedYear, holidays);
-  }, [state.selectedYear]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -47,16 +39,18 @@ export default function Home() {
       {/* D-Day Countdown */}
       <DdayCountdown year={state.selectedYear} selectedDates={state.selectedDates} />
 
-      {/* Recommendations */}
+      {/* Recommendations (merged with golden holidays) */}
       <SectionWrapper
         id="recommendations"
         title="연차 활용 추천"
-        subtitle="남은 연차로 최대한 쉴 수 있는 방법을 알려드려요"
+        subtitle="황금연휴와 비수기를 활용한 최적의 연차 사용 가이드"
       >
         <RecommendationEngine
           remainingDays={state.remainingVacationDays}
           year={state.selectedYear}
+          selectedDates={state.selectedDates}
           onApply={applyRecommendation}
+          onRemove={removeRecommendation}
         />
       </SectionWrapper>
 
@@ -72,29 +66,6 @@ export default function Home() {
           selectedDates={state.selectedDates}
           onDateClick={toggleVacationDate}
         />
-      </SectionWrapper>
-
-      {/* Golden Holidays */}
-      <SectionWrapper
-        id="golden"
-        title="황금연휴 가이드"
-        subtitle="적은 연차로 긴 연휴를 만드세요"
-      >
-        {goldenPeriods.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {goldenPeriods.map((period) => (
-              <GoldenHolidayCard
-                key={period.id}
-                period={period}
-                onApply={applyRecommendation}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="rounded-xl border bg-gray-50 p-8 text-center text-gray-500">
-            황금연휴 기간이 없습니다
-          </div>
-        )}
       </SectionWrapper>
 
       {/* Flight Costs */}

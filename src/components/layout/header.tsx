@@ -4,7 +4,6 @@ const SECTIONS = [
   { id: "input", label: "입력" },
   { id: "recommendations", label: "추천" },
   { id: "calendar", label: "캘린더" },
-  { id: "golden", label: "황금연휴" },
   { id: "flights", label: "항공료" },
   { id: "planner", label: "플래너" },
 ];

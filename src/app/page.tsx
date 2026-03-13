@@ -87,6 +87,7 @@ export default function Home() {
         <VacationPlanner
           selectedDates={state.selectedDates}
           remainingDays={state.remainingVacationDays}
+          year={state.selectedYear}
           onClear={clearSelectedDates}
         />
       </SectionWrapper>
